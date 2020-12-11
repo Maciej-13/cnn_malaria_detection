@@ -33,3 +33,16 @@ class ImageDataShow:
             ax[1, 1].imshow(images[i + 3])
             ax[1, 1].set_title(text_labels[i + 3])
         plt.show()
+
+
+class VisualizePerformance:
+
+    @staticmethod
+    @beartype
+    def plot_training():
+        pass
+
+    @staticmethod
+    @beartype
+    def plot_fine_tuning():
+        pass

@@ -1,5 +1,3 @@
-import tensorflow as tf
-
 from tensorflow import keras
 from tensorflow.keras import layers
 from beartype import beartype
@@ -11,6 +9,9 @@ class PreTrainedModel:
 
     def __init__(self):
         self._base_model = self.__create_base_model()
+
+    def number_of_layers_in_base_model(self):
+        return len(self._base_model.layers)
 
     def unfreeze_top_layers(self, unfreeze_from: int):
         for layer in self._base_model.layers[unfreeze_from:]:
@@ -41,13 +42,12 @@ class VGG19(CNN, PreTrainedModel):
 
     @beartype
     def __create_model(self, input_shape: tuple, activation: str, dropout_rate: float):
-        model = keras.Sequential([
-            self._base_model,
-
-            layers.Dropout(dropout_rate),
-
-            layers.Dense(units=1, activation='sigmoid')
-        ])
+        inputs = keras.Input(shape=input_shape)
+        x = self._base_model(inputs, training=False)
+        x = keras.layers.Dropout(dropout_rate)(x)
+        x = keras.layers.Flatten()(x)
+        outputs = layers.Dense(units=1, activation="sigmoid")(x)
+        model = keras.Model(inputs, outputs)
         return model
 
     @beartype
@@ -100,7 +100,6 @@ class InceptionResNetV2(CNN, PreTrainedModel):
     def __create_model(self, input_shape: tuple, activation: str, dropout_rate: float):
         inputs = keras.Input(shape=input_shape)
         x = self._base_model(inputs, training=False)
-        x = layers.GlobalMaxPooling2D()(x)
         x = keras.layers.Dropout(dropout_rate)(x)
         outputs = layers.Dense(units=1, activation="sigmoid")(x)
         model = keras.Model(inputs, outputs)
@@ -129,7 +128,6 @@ class NasNetMobile(CNN, PreTrainedModel):
     def __create_model(self, input_shape: tuple, activation: str, dropout_rate: float):
         inputs = keras.Input(shape=input_shape)
         x = self._base_model(inputs, training=False)
-        x = layers.GlobalMaxPooling2D()(x)
         x = keras.layers.Dropout(dropout_rate)(x)
         outputs = layers.Dense(units=1, activation="sigmoid")(x)
         model = keras.Model(inputs, outputs)
@@ -137,7 +135,7 @@ class NasNetMobile(CNN, PreTrainedModel):
 
     @beartype
     def __create_base_model(self, input_shape: tuple):
-        base_model = keras.applications.NASNetMobile(input_shape=input_shape, include_top=False, weights='imagenet')
+        base_model = keras.applications.NASNetMobile(include_top=False, input_shape=input_shape, weights='imagenet')
         base_model.trainable = False
         return base_model
 
@@ -157,7 +155,7 @@ class MobileNetV2(CNN, PreTrainedModel):
     def __create_model(self, input_shape: tuple, activation: str, dropout_rate: float):
         inputs = keras.Input(shape=input_shape)
         x = self._base_model(inputs, training=False)
-        x = layers.GlobalMaxPooling2D()(x)
+        x = keras.layers.Flatten()(x)
         x = keras.layers.Dropout(dropout_rate)(x)
         outputs = layers.Dense(units=1, activation="sigmoid")(x)
         model = keras.Model(inputs, outputs)

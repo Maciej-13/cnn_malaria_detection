@@ -6,8 +6,8 @@ from beartype import beartype
 class ImageDataReader:
 
     @beartype
-    def __init__(self, path: str = '/data', validation_split: float = 0.2, random_seed: int = 12345,
-                 batch_size: int = 32, target_size: tuple = (80, 80), **kwargs):
+    def __init__(self, path: str = '/data', validation_split: float = 0.2, batch_size: int = 32,
+                 target_size: tuple = (80, 80), random_seed: int = 12345, **kwargs):
         self.__path = path
         self.__seed = random_seed
         self.__set_seed()

@@ -11,19 +11,25 @@ class CNN:
     def get_summary(self):
         return self._model.summary()
 
+    def get_model(self):
+        return self._model
+
     @beartype
     def compile_model(self, loss, optimizer, metrics: list):
         self._model.compile(optimizer=optimizer, loss=loss, metrics=metrics)
 
     @beartype
-    def train(self, training_data, epochs: int, steps_per_epoch: int, **kwargs):
-        return self._model.fit(training_data, epochs=epochs, steps_per_epoch=steps_per_epoch, **kwargs)
+    def train(self, training_data, epochs: int, **kwargs):
+        return self._model.fit(training_data, epochs=epochs, **kwargs)
 
     def evaluate(self, data_generator):
         return self._model.evaluate(data_generator)
 
     def predict(self, data):
         return self._model.predict(data)
+
+    def save(self, *args, **kwargs):
+        return self._model.save(*args, **kwargs)
 
     def __create_model(self, **kwargs):
         model = keras.Sequential([])
@@ -250,3 +256,4 @@ class VGG16(CNN):
 
         ])
         return model
+

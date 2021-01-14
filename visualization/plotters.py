@@ -13,25 +13,17 @@ class ImageDataShow:
 
     @staticmethod
     @beartype
-    def show_batch(images, labels, batch_size: int = 32, infected_class: int = 1):
+    def show_batch(images, labels, infected_class: int = 1):
         text_labels = ['Infected' if x == infected_class else 'Not infected' for x in labels]
-        for i in range(0, batch_size, 4):
-            f, ax = plt.subplots(2, 2)
-            ax[0, 0].get_xaxis().set_visible(False)
-            ax[0, 0].imshow(images[i])
-            ax[0, 0].set_title(text_labels[i])
+        plt.figure(figsize=(18, 8))
 
-            ax[0, 1].get_xaxis().set_visible(False)
-            ax[0, 1].imshow(images[i + 1])
-            ax[0, 1].set_title(text_labels[i + 1])
-
-            ax[1, 0].get_xaxis().set_visible(False)
-            ax[1, 0].imshow(images[i + 2])
-            ax[1, 0].set_title(text_labels[i + 2])
-
-            ax[1, 1].get_xaxis().set_visible(False)
-            ax[1, 1].imshow(images[i + 3])
-            ax[1, 1].set_title(text_labels[i + 3])
+        for i in range(32):
+            plt.subplot(4, 8, i + 1)
+            plt.xticks([])
+            plt.yticks([])
+            plt.grid(False)
+            plt.imshow(images[i])
+            plt.xlabel(text_labels[i])
         plt.show()
 
 
@@ -39,10 +31,43 @@ class VisualizePerformance:
 
     @staticmethod
     @beartype
-    def plot_training():
-        pass
+    def plot_training(epochs: int, accuracy: list, loss: list):
+        epochs_range = range(epochs)
+        fig, (ax1, ax2) = plt.subplots(2)
+        fig.set_figheight(10)
+        fig.set_figwidth(15)
+
+        ax1.plot(epochs_range, accuracy[0], label='Training Accuracy')
+        ax1.plot(epochs_range, accuracy[1], label='Validation Accuracy')
+        ax1.legend(loc='lower right')
+        ax1.set_title('Training and Validation Accuracy')
+
+        ax2.plot(epochs_range, loss[0], label='Training Loss')
+        ax2.plot(epochs_range, loss[1], label='Validation Loss')
+        ax2.legend(loc='upper right')
+        ax2.set_title('Training and Validation Loss')
+
+        plt.show()
 
     @staticmethod
     @beartype
-    def plot_fine_tuning():
-        pass
+    def plot_fine_tuning(initial_epochs: int, tuning_epochs: int, accuracy: list, loss: list):
+        epochs_range = range(initial_epochs + tuning_epochs)
+        fig, (ax1, ax2) = plt.subplots(2)
+        fig.set_figheight(10)
+        fig.set_figwidth(15)
+
+        ax1.plot(epochs_range, accuracy[0], label='Training Accuracy')
+        ax1.plot(epochs_range, accuracy[1], label='Validation Accuracy')
+        ax1.plot([initial_epochs - 1, initial_epochs - 1], plt.ylim(), label='Start Fine Tuning')
+        ax1.legend(loc='lower right')
+        ax1.set_title('Training and Validation Accuracy')
+
+        ax2.plot(epochs_range, loss[0], label='Training Loss')
+        ax2.plot(epochs_range, loss[1], label='Validation Loss')
+        ax2.plot([initial_epochs - 1, initial_epochs - 1], plt.ylim(), label='Start Fine Tuning')
+        ax2.legend(loc='upper right')
+        ax2.set_title('Training and Validation Loss')
+
+        plt.show()
+

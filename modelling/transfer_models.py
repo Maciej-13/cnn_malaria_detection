@@ -21,7 +21,7 @@ class PreTrainedModel:
         return self._base_model.summary()
 
     def fine_tuning(self, training_data, initial_epochs: int, fine_tune_epochs: int, **kwargs):
-        raise NotImplementedError("Method mus be overridden in the derived class!")
+        raise NotImplementedError("Method must be overridden in the derived class!")
 
     @beartype
     def __create_base_model(self, **kwargs):
